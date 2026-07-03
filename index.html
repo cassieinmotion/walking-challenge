@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7-Day Walking Challenge · @cassieinmotion_</title>
+  <meta name="description" content="Your daily check-in for the 7-Day Walking Challenge with Cassie." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #5DCAA5;
+      --green-dark: #0F6E56; --green-deep: #085041;
+      --yellow: #E8A020; --yellow-light: #FEF3DC; --yellow-dark: #7A4F00;
+      --red: #D94040; --red-light: #FDEAEA; --red-dark: #7A1A1A;
+      --text: #1a1a1a; --text-secondary: #666; --text-tertiary: #999;
+      --bg: #f7f7f5; --surface: #ffffff;
+      --border: rgba(0,0,0,0.1); --border-hover: rgba(0,0,0,0.2);
+      --radius: 12px; --radius-sm: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #f0f0ee; --text-secondary: #aaa; --text-tertiary: #666;
+        --bg: #141412; --surface: #1e1e1c;
+        --border: rgba(255,255,255,0.1); --border-hover: rgba(255,255,255,0.2);
+        --yellow-light: #2a1f00; --yellow-dark: #f5c842;
+        --red-light: #2a0a0a; --red-dark: #f08080;
+        --green-light: #021f14; --green-deep: #9fe8cc;
+      }
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1.5rem 1rem 4rem; }
+    .app { max-width: 480px; margin: 0 auto; }
+    .top-brand { text-align: center; margin-bottom: 2rem; }
+    .top-brand .handle { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); }
+    .top-brand .challenge-name { font-size: 13px; font-weight: 500; color: var(--green); margin-top: 2px; }
+    .day-header { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 0.2rem; }
+    .day-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .streak-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; justify-content: center; }
+    .streak-dot { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-tertiary); background: var(--surface); font-weight: 500; }
+    .streak-dot.done-green { background: var(--green); border-color: var(--green); color: #fff; }
+    .streak-dot.done-yellow { background: var(--yellow); border-color: var(--yellow); color: #fff; }
+    .streak-dot.done-red { background: var(--red); border-color: var(--red); color: #fff; }
+    .streak-dot.today { background: var(--surface); border: 2px solid var(--green); color: var(--green); font-weight: 600; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.875rem; }
+    .card-label { font-size: 12px; color: var(--text-tertiary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 0.875rem; line-height: 1.4; }
+    .card-hint { font-size: 13px; color: var(--text-secondary); margin-bottom: 0.875rem; line-height: 1.5; }
+    .goal-display { font-size: 24px; font-weight: 600; color: var(--green); }
+    .goal-unit { font-size: 14px; color: var(--text-secondary); font-weight: 400; }
+    .mood-row { display: flex; gap: 6px; }
+    .mood-btn { flex: 1; padding: 10px 4px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); cursor: pointer; text-align: center; font-size: 12px; color: var(--text-secondary); font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .mood-btn:hover { border-color: var(--border-hover); background: var(--bg); }
+    .mood-btn.selected { background: var(--green-light); border-color: var(--green); color: var(--green-dark); font-weight: 500; }
+    .mood-num { font-size: 18px; font-weight: 600; display: block; margin-bottom: 2px; color: inherit; }
+    .text-input { width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s; }
+    .text-input:focus { border-color: var(--green); }
+    .steps-input-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+    .steps-input { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 26px; font-weight: 600; font-family: 'Inter', sans-serif; outline: none; width: 160px; transition: border-color 0.15s; text-align: center; }
+    .steps-input:focus { border-color: var(--green); }
+    .steps-label { font-size: 15px; color: var(--text-secondary); }
+    .goal-input { padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 20px; font-weight: 600; font-family: 'Inter', sans-serif; outline: none; width: 130px; transition: border-color 0.15s; }
+    .goal-input:focus { border-color: var(--green); }
+    .goal-input-wrap { display: flex; align-items: center; gap: 10px; }
+    .step-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-size: 13px; font-weight: 500; margin-top: 4px; }
+    .step-status-badge.green { background: var(--green-light); color: var(--green-dark); }
+    .step-status-badge.yellow { background: var(--yellow-light); color: var(--yellow-dark); }
+    .step-status-badge.red { background: var(--red-light); color: var(--red-dark); }
+    .step-status-badge.hidden { display: none; }
+    .progress-bar-wrap { height: 6px; background: var(--border); border-radius: 100px; margin-top: 10px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+    .progress-bar-fill.green { background: var(--green); }
+    .progress-bar-fill.yellow { background: var(--yellow); }
+    .progress-bar-fill.red { background: var(--red); }
+    .submit-btn { width: 100%; padding: 14px; border-radius: var(--radius); background: var(--green); border: none; color: #fff; font-size: 16px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; margin-top: 0.25rem; transition: opacity 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .submit-btn:hover { opacity: 0.92; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .ai-response { background: var(--green-light); border: 1px solid var(--green-mid); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.875rem; }
+    .ai-label { font-size: 11px; color: var(--green-dark); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 500; }
+    .ai-text { font-size: 15px; color: var(--green-deep); line-height: 1.65; }
+    .share-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.875rem; }
+    .share-preview { background: var(--green); border-radius: var(--radius-sm); padding: 1.5rem 1.25rem; margin-bottom: 0.875rem; color: #fff; text-align: center; }
+    .share-challenge-label { font-size: 11px; opacity: 0.75; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .share-day-num { font-size: 40px; font-weight: 600; line-height: 1; margin-bottom: 0.5rem; }
+    .share-steps-count { font-size: 18px; font-weight: 500; opacity: 0.95; margin-bottom: 0.25rem; }
+    .share-win { font-size: 14px; opacity: 0.8; margin-bottom: 0.75rem; font-style: italic; }
+    .share-streak { font-size: 13px; opacity: 0.7; }
+    .share-handle { font-size: 11px; opacity: 0.55; margin-top: 0.75rem; letter-spacing: 0.05em; }
+    .btn-outline { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer; margin-bottom: 8px; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-cassie { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--green); background: var(--surface); color: var(--green); font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
+    .btn-cassie:hover { background: var(--green-light); }
+    .btn-cassie:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-cassie.sent { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+    .text-muted { font-size: 13px; color: var(--text-tertiary); text-align: center; margin-top: 1rem; line-height: 1.5; }
+    .goal-row { display: flex; align-items: center; justify-content: space-between; }
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 100px; font-size: 14px; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; z-index: 100; font-family: 'Inter', sans-serif; }
+    .toast.show { opacity: 1; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .result-step-summary { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .result-steps-big { font-size: 32px; font-weight: 600; }
+    .result-steps-big.green { color: var(--green); }
+    .result-steps-big.yellow { color: var(--yellow); }
+    .result-steps-big.red { color: var(--red); }
+    .result-vs-goal { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="top-brand">
+    <div class="handle">@cassieinmotion_</div>
+    <div class="challenge-name">7-Day Walking Challenge</div>
+  </div>
+
+  <!-- ONBOARD -->
+  <div id="screen-onboard">
+    <div class="day-header">Welcome to the challenge.</div>
+    <div class="day-sub">Let's get you set up for the week.</div>
+    <div class="card">
+      <div class="card-label">Your name</div>
+      <input class="text-input" id="name-input" type="text" placeholder="First name" maxlength="40" />
+    </div>
+    <div class="card">
+      <div class="card-label">Your Instagram handle</div>
+      <div class="card-hint" style="margin-bottom:0.5rem;">So Cassie can find you and check in personally during the challenge.</div>
+      <input class="text-input" id="handle-input" type="text" placeholder="@yourhandle" maxlength="40" />
+    </div>
+    <div class="card">
+      <div class="card-title">What's your personal step goal for this week?</div>
+      <div class="card-hint">Pick a number that feels like a real challenge for you — this week is yours to define.</div>
+      <div class="goal-input-wrap">
+        <input class="goal-input" id="goal-input" type="number" placeholder="8000" min="500" max="80000" step="500" />
+        <span style="font-size:15px; color:var(--text-secondary);">steps / day</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">How many steps did you get today?</div>
+      <div class="steps-input-wrap">
+        <input class="steps-input" id="steps-input-0" type="number" placeholder="0" min="0" max="100000" step="100" oninput="updateStepFeedback('steps-input-0','step-badge-0','step-progress-0')" />
+        <span class="steps-label">steps</span>
+      </div>
+      <div class="step-status-badge hidden" id="step-badge-0"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="step-progress-0" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">How's your energy right now?</div>
+      <div class="mood-row" id="mood-btns-0">
+        <button class="mood-btn" onclick="selectMood(this,1)"><span class="mood-num">1</span>Low</button>
+        <button class="mood-btn" onclick="selectMood(this,2)"><span class="mood-num">2</span>Meh</button>
+        <button class="mood-btn" onclick="selectMood(this,3)"><span class="mood-num">3</span>OK</button>
+        <button class="mood-btn" onclick="selectMood(this,4)"><span class="mood-num">4</span>Good</button>
+        <button class="mood-btn" onclick="selectMood(this,5)"><span class="mood-num">5</span>Great</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">One word for today's walk</div>
+      <input class="text-input" id="word-input-0" type="text" placeholder="e.g. steady, needed, hard..." maxlength="30" />
+    </div>
+    <button class="submit-btn" id="submit-day1" onclick="submitDay1()">
+      Start my challenge <i class="ti ti-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- DAILY -->
+  <div id="screen-daily" style="display:none;">
+    <div class="day-header" id="daily-heading">Day 2</div>
+    <div class="day-sub" id="daily-sub">Keep the streak alive.</div>
+    <div class="streak-bar" id="streak-bar"></div>
+    <div class="card goal-row">
+      <div>
+        <div class="card-label">Your step goal</div>
+        <span class="goal-display" id="goal-display">8,000</span>
+        <span class="goal-unit"> steps / day</span>
+      </div>
+      <i class="ti ti-target" style="font-size:30px; color:var(--green-mid);"></i>
+    </div>
+    <div class="card">
+      <div class="card-title">How many steps did you get today?</div>
+      <div class="steps-input-wrap">
+        <input class="steps-input" id="steps-input-daily" type="number" placeholder="0" min="0" max="100000" step="100" oninput="updateStepFeedback('steps-input-daily','step-badge-daily','step-progress-daily')" />
+        <span class="steps-label">steps</span>
+      </div>
+      <div class="step-status-badge hidden" id="step-badge-daily"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="step-progress-daily" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Energy level today</div>
+      <div class="mood-row" id="mood-btns-daily">
+        <button class="mood-btn" onclick="selectMood(this,1)"><span class="mood-num">1</span>Low</button>
+        <button class="mood-btn" onclick="selectMood(this,2)"><span class="mood-num">2</span>Meh</button>
+        <button class="mood-btn" onclick="selectMood(this,3)"><span class="mood-num">3</span>OK</button>
+        <button class="mood-btn" onclick="selectMood(this,4)"><span class="mood-num">4</span>Good</button>
+        <button class="mood-btn" onclick="selectMood(this,5)"><span class="mood-num">5</span>Great</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">One word for today</div>
+      <input class="text-input" id="word-input-daily" type="text" placeholder="e.g. proud, tough, peaceful..." maxlength="30" />
+    </div>
+    <button class="submit-btn" id="submit-daily" onclick="submitDaily()">
+      Log today <i class="ti ti-check"></i>
+    </button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" style="display:none;">
+    <div class="day-header" id="result-heading">Day 1 done.</div>
+    <div class="day-sub" id="result-sub">You showed up.</div>
+    <div class="streak-bar" id="result-streak-bar" style="margin-bottom:1rem;"></div>
+
+    <div class="card" style="margin-bottom:0.875rem;">
+      <div class="card-label">Today's steps</div>
+      <div class="result-step-summary">
+        <div>
+          <div class="result-steps-big" id="result-steps-big">0</div>
+          <div class="result-vs-goal" id="result-vs-goal"></div>
+        </div>
+        <div class="step-status-badge" id="result-badge"></div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="result-progress" style="width:0%"></div></div>
+    </div>
+
+    <div class="ai-response">
+      <div class="ai-label">Your encouragement</div>
+      <div class="ai-text" id="ai-text">Getting your message...</div>
+    </div>
+
+    <div class="share-card">
+      <div class="card-label" style="margin-bottom:0.75rem;">Share your win</div>
+      <div class="share-preview">
+        <div class="share-challenge-label">7-Day Walking Challenge</div>
+        <div class="share-day-num" id="share-day-num">Day 1 ✓</div>
+        <div class="share-steps-count" id="share-steps-count">8,432 steps</div>
+        <div class="share-win" id="share-win-text">"I showed up."</div>
+        <div class="share-streak" id="share-streak-text">Streak: 1 day</div>
+        <div class="share-handle">@cassieinmotion_</div>
+      </div>
+      <button class="btn-outline" onclick="copyShareText()">
+        <i class="ti ti-copy"></i> Copy share text
+      </button>
+      <div id="cassie-btn-wrap"></div>
+    </div>
+
+    <div class="text-muted" id="come-back-msg"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgtesrIQH_9G9e_0yj9MVyzKd_IGSZ00Cpnrm-HUxZyNErFXP1_jS97Nojw3qQ0XO4UA/exec';
+
+let state = { name:'', handle:'', goal:0, currentDay:1, days:[], moodToday:null, stepsToday:null };
+
+function loadState() {
+  try { const s = localStorage.getItem('wc_v4'); if (s) state = JSON.parse(s); } catch(e) {}
+}
+function saveState() {
+  try { localStorage.setItem('wc_v4', JSON.stringify(state)); } catch(e) {}
+}
+function showToast(msg, duration) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration || 2500);
+}
+
+function getStepStatus(steps, goal) {
+  if (!goal || goal === 0) return 'green';
+  const pct = steps / goal;
+  if (pct >= 1) return 'green';
+  if (pct >= 0.8) return 'yellow';
+  return 'red';
+}
+
+function getStatusLabel(status, steps, goal) {
+  const pct = Math.round((steps / goal) * 100);
+  if (status === 'green') return { icon: '✓', text: `Goal hit! (${pct}%)` };
+  if (status === 'yellow') return { icon: '~', text: `${pct}% of goal — almost there` };
+  return { icon: '×', text: `${pct}% of goal — keep going` };
+}
+
+function updateStepFeedback(inputId, badgeId, progressId) {
+  const steps = parseInt(document.getElementById(inputId).value) || 0;
+  const goal = state.goal || parseInt(document.getElementById('goal-input')?.value) || 0;
+  const badge = document.getElementById(badgeId);
+  const progress = document.getElementById(progressId);
+  state.stepsToday = steps;
+
+  if (steps === 0 || goal === 0) {
+    badge.className = 'step-status-badge hidden';
+    progress.style.width = '0%';
+    progress.className = 'progress-bar-fill';
+    return;
+  }
+
+  const status = getStepStatus(steps, goal);
+  const label = getStatusLabel(status, steps, goal);
+  badge.className = `step-status-badge ${status}`;
+  badge.innerHTML = `<span>${label.icon}</span> ${label.text}`;
+
+  const fillPct = Math.min(100, Math.round((steps / goal) * 100));
+  progress.style.width = fillPct + '%';
+  progress.className = `progress-bar-fill ${status}`;
+}
+
+function selectMood(btn, val) {
+  btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.moodToday = val;
+}
+
+function buildStreakBar(id, completedDays, currentDay) {
+  const bar = document.getElementById(id);
+  if (!bar) return;
+  bar.innerHTML = '';
+  for (let i = 1; i <= 7; i++) {
+    const dot = document.createElement('div');
+    const done = completedDays.find(d => d.day === i);
+    if (done) {
+      const status = getStepStatus(done.steps, state.goal);
+      dot.className = `streak-dot done-${status}`;
+      dot.innerHTML = `<i class="ti ti-${status === 'green' ? 'check' : status === 'yellow' ? 'minus' : 'x'}"></i>`;
+      dot.title = `Day ${i}: ${done.steps.toLocaleString()} steps`;
+    } else if (i === currentDay) {
+      dot.className = 'streak-dot today';
+      dot.textContent = i;
+    } else {
+      dot.className = 'streak-dot';
+      dot.textContent = i;
+    }
+    bar.appendChild(dot);
+  }
+}
+
+async function getAIResponse(name, day, steps, mood, word, goal, streak) {
+  const moodWords = ['','drained','low','okay','good','great'];
+  const status = getStepStatus(steps, goal);
+  const pct = Math.round((steps / goal) * 100);
+  const statusDesc = status === 'green' ? `hit their goal (${steps.toLocaleString()} steps, ${pct}% of goal)` : status === 'yellow' ? `got to ${pct}% of their goal (${steps.toLocaleString()} steps — within 80%)` : `logged ${steps.toLocaleString()} steps (${pct}% of their ${goal.toLocaleString()} step goal)`;
+  const prompt = `You are a warm, direct coach for a 7-day walking challenge. Participant: ${name}. Day ${day} of 7. Personal step goal: ${goal.toLocaleString()} steps/day. They ${statusDesc}. Energy: ${moodWords[mood] || mood}/5. One word for today: "${word || 'present'}". Current streak: ${streak} consecutive goal day${streak!==1?'s':''}. Write 2-3 sentences of genuine specific encouragement. Reference their step count or word naturally if it adds something real. Warm but not cheesy. No hashtags. End naturally.`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    return data.content?.[0]?.text || 'You showed up and logged your steps — that accountability is what builds the habit.';
+  } catch(e) {
+    return 'You showed up and logged your steps today. That consistency is what this week is all about.';
+  }
+}
+
+async function showResultScreen(day, steps, word) {
+  document.getElementById('screen-onboard').style.display = 'none';
+  document.getElementById('screen-daily').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+
+  const status = getStepStatus(steps, state.goal);
+  const pct = Math.min(100, Math.round((steps / state.goal) * 100));
+  const streak = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'green').length;
+  const consecutiveStreak = (() => {
+    let s = 0;
+    for (let i = state.days.length - 1; i >= 0; i--) {
+      if (getStepStatus(state.days[i].steps, state.goal) === 'green') s++;
+      else break;
+    }
+    return s;
+  })();
+
+  document.getElementById('result-heading').textContent = day < 7 ? `Day ${day} done.` : 'All 7 days done.';
+  document.getElementById('result-sub').textContent = day < 7 ? `${7 - day} day${7-day!==1?'s':''} left.` : 'You finished the challenge.';
+
+  const stepsEl = document.getElementById('result-steps-big');
+  stepsEl.textContent = steps.toLocaleString();
+  stepsEl.className = `result-steps-big ${status}`;
+
+  const diff = steps - state.goal;
+  const vsText = diff >= 0 ? `+${diff.toLocaleString()} over your ${state.goal.toLocaleString()} step goal` : `${Math.abs(diff).toLocaleString()} steps short of your ${state.goal.toLocaleString()} step goal`;
+  document.getElementById('result-vs-goal').textContent = vsText;
+
+  const resultBadge = document.getElementById('result-badge');
+  const label = getStatusLabel(status, steps, state.goal);
+  resultBadge.className = `step-status-badge ${status}`;
+  resultBadge.innerHTML = `<span>${label.icon}</span> ${status === 'green' ? 'Goal hit' : status === 'yellow' ? 'Almost' : 'Keep going'}`;
+
+  const resultProgress = document.getElementById('result-progress');
+  resultProgress.style.width = pct + '%';
+  resultProgress.className = `progress-bar-fill ${status}`;
+
+  buildStreakBar('result-streak-bar', state.days, day < 7 ? day + 1 : 0);
+
+  document.getElementById('share-day-num').textContent = `Day ${day} ✓`;
+  document.getElementById('share-steps-count').textContent = `${steps.toLocaleString()} steps`;
+  const winPhrases = {
+    green: ['I said I would, and I did.', 'Goal hit. No excuses needed.', 'Commitment kept.'],
+    yellow: ['Almost there — and I showed up.', 'Progress is still progress.', 'I kept moving. That matters.'],
+    red: ['Tomorrow is still in front of me.', 'I checked in anyway. That is real.', 'Every step counted today.']
+  };
+  const phrases = winPhrases[status];
+  document.getElementById('share-win-text').textContent = `"${phrases[day % phrases.length]}"`;
+  document.getElementById('share-streak-text').textContent = `${streak} of ${day} days at goal`;
+
+  const comeBack = document.getElementById('come-back-msg');
+  comeBack.textContent = day < 7 ? `Bookmark this page and come back tomorrow for Day ${day + 1}.` : 'You completed all 7 days. That is something worth celebrating.';
+
+  const cassieWrap = document.getElementById('cassie-btn-wrap');
+  if (day >= 3 || day === 7) {
+    cassieWrap.innerHTML = `<button class="btn-cassie" id="cassie-btn" onclick="sendToCassie()"><i class="ti ti-send"></i> Send my data to Cassie</button>`;
+  } else { cassieWrap.innerHTML = ''; }
+
+  document.getElementById('ai-text').textContent = 'Getting your message...';
+  const aiMsg = await getAIResponse(state.name, day, steps, state.moodToday, word, state.goal, consecutiveStreak);
+  document.getElementById('ai-text').textContent = aiMsg;
+}
+
+async function submitDay1() {
+  const name = document.getElementById('name-input').value.trim();
+  const handleRaw = document.getElementById('handle-input').value.trim();
+  const goalRaw = document.getElementById('goal-input').value;
+  const stepsRaw = document.getElementById('steps-input-0').value;
+  const word = document.getElementById('word-input-0').value.trim();
+  if (!name) { showToast('Add your name to get started'); return; }
+  if (!handleRaw) { showToast('Add your Instagram handle'); return; }
+  if (!goalRaw || parseInt(goalRaw) < 500) { showToast('Set your step goal to continue'); return; }
+  if (!stepsRaw || parseInt(stepsRaw) < 0) { showToast('Enter your step count for today'); return; }
+  if (!state.moodToday) { showToast('Rate your energy to continue'); return; }
+
+  const btn = document.getElementById('submit-day1');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+
+  state.name = name;
+  state.handle = handleRaw.startsWith('@') ? handleRaw : '@' + handleRaw;
+  state.goal = parseInt(goalRaw);
+  state.stepsToday = parseInt(stepsRaw);
+  state.currentDay = 1;
+  state.days = [{ day:1, steps:state.stepsToday, mood:state.moodToday, word }];
+  saveState();
+  await showResultScreen(1, state.stepsToday, word);
+}
+
+async function submitDaily() {
+  const stepsRaw = document.getElementById('steps-input-daily').value;
+  const word = document.getElementById('word-input-daily').value.trim();
+  if (!stepsRaw || parseInt(stepsRaw) < 0) { showToast('Enter your step count for today'); return; }
+  if (!state.moodToday) { showToast('Rate your energy to continue'); return; }
+
+  const btn = document.getElementById('submit-daily');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+
+  const day = state.currentDay;
+  state.stepsToday = parseInt(stepsRaw);
+  state.days.push({ day, steps:state.stepsToday, mood:state.moodToday, word });
+  saveState();
+  await showResultScreen(day, state.stepsToday, word);
+}
+
+function showDailyScreen() {
+  document.getElementById('screen-onboard').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-daily').style.display = 'block';
+  const day = state.currentDay;
+  document.getElementById('daily-heading').textContent = `Day ${day}`;
+  const subs = ['','','Keep the streak alive.','Past the halfway point.','Strong through the middle.','Almost there — don\'t stop now.','One day left. Finish strong.','Final day. Make it count.'];
+  document.getElementById('daily-sub').textContent = subs[day] || 'Keep going.';
+  document.getElementById('goal-display').textContent = Number(state.goal).toLocaleString();
+  buildStreakBar('streak-bar', state.days, day);
+  document.getElementById('mood-btns-daily').querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('steps-input-daily').value = '';
+  document.getElementById('step-badge-daily').className = 'step-status-badge hidden';
+  document.getElementById('step-progress-daily').style.width = '0%';
+  document.getElementById('word-input-daily').value = '';
+  document.getElementById('submit-daily').disabled = false;
+  document.getElementById('submit-daily').innerHTML = 'Log today <i class="ti ti-check"></i>';
+  state.moodToday = null;
+  state.stepsToday = null;
+}
+
+function copyShareText() {
+  const lastDay = state.days[state.days.length - 1];
+  const steps = lastDay?.steps || 0;
+  const day = state.days.length;
+  const goalsHit = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'green').length;
+  const text = `Day ${day} of the 7-Day Walking Challenge ✓\n${steps.toLocaleString()} steps logged today\n${goalsHit} of ${day} days at my personal goal\n\n#7DayWalkingChallenge @cassieinmotion_`;
+  navigator.clipboard.writeText(text)
+    .then(() => showToast('Copied! Ready to post.'))
+    .catch(() => showToast('Tap and hold to copy manually'));
+}
+
+async function sendToCassie() {
+  const btn = document.getElementById('cassie-btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner" style="border-color:rgba(29,158,117,0.3);border-top-color:var(--green);"></span> Sending...'; }
+
+  const goalsHit = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'green').length;
+  const almostDays = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'yellow').length;
+  const avgSteps = state.days.length > 0 ? Math.round(state.days.reduce((s,d) => s + d.steps, 0) / state.days.length) : 0;
+  const avgMood = state.days.length > 0 ? (state.days.reduce((s,d) => s + d.mood, 0) / state.days.length).toFixed(1) : 0;
+  const words = state.days.map(d => d.word).filter(Boolean).join(', ');
+  const payload = {
+    name: state.name, handle: state.handle, goal: state.goal,
+    completed: goalsHit, almostDays, totalDays: state.days.length,
+    avgSteps, avgMood, words, days: state.days
+  };
+
+  try {
+    await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if (btn) { btn.classList.add('sent'); btn.innerHTML = '<i class="ti ti-check"></i> Sent to Cassie!'; }
+    showToast('Data sent successfully!', 3000);
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-send"></i> Send my data to Cassie'; }
+    showToast('Could not send — try again', 3000);
+  }
+}
+
+loadState();
+if (state.name && state.days.length > 0) {
+  const lastDay = state.days[state.days.length - 1];
+  if (lastDay.day < 7) {
+    state.currentDay = lastDay.day + 1;
+    state.moodToday = null;
+    state.stepsToday = null;
+    showDailyScreen();
+  } else {
+    showResultScreen(7, lastDay.steps, lastDay.word);
+  }
+}
+</script>
+</body>
+</html>
