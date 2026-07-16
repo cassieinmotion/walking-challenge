@@ -251,7 +251,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgtesrIQH_9G9e_0yj9MVyzKd_IGSZ00Cpnrm-HUxZyNErFXP1_jS97Nojw3qQ0XO4UA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_hRX67zc1Pl6GN6tUsvDokdqaxSaUMzbx16eWBrrIXVV6E3Tw0vu4KvtsSLN7LEqtDA/exec';
 
 let state = { name:'', handle:'', goal:0, currentDay:1, days:[], moodToday:null, stepsToday:null };
 
@@ -408,13 +408,19 @@ async function showResultScreen(day, steps, word) {
   comeBack.textContent = day < 7 ? `Bookmark this page and come back tomorrow for Day ${day + 1}.` : 'You completed all 7 days. That is something worth celebrating.';
 
   const cassieWrap = document.getElementById('cassie-btn-wrap');
-  if (day >= 3 || day === 7) {
-    cassieWrap.innerHTML = `<button class="btn-cassie" id="cassie-btn" onclick="sendToCassie()"><i class="ti ti-send"></i> Send my data to Cassie</button>`;
-  } else { cassieWrap.innerHTML = ''; }
+  cassieWrap.innerHTML = `<button class="btn-cassie" id="cassie-btn" onclick="sendToCassie()" disabled><span class="spinner" style="border-color:rgba(29,158,117,0.3);border-top-color:var(--green);"></span> Sending to Cassie...</button>`;
 
   document.getElementById('ai-text').textContent = 'Getting your message...';
   const aiMsg = await getAIResponse(state.name, day, steps, state.moodToday, word, state.goal, consecutiveStreak);
   document.getElementById('ai-text').textContent = aiMsg;
+
+  const cassieBtn = document.getElementById('cassie-btn');
+  try {
+    await sendDataToCassie();
+    if (cassieBtn) { cassieBtn.disabled = false; cassieBtn.classList.add('sent'); cassieBtn.innerHTML = '<i class="ti ti-check"></i> Synced with Cassie'; }
+  } catch(e) {
+    if (cassieBtn) { cassieBtn.disabled = false; cassieBtn.innerHTML = '<i class="ti ti-send"></i> Resend to Cassie'; }
+  }
 }
 
 async function submitDay1() {
@@ -492,10 +498,7 @@ function copyShareText() {
     .catch(() => showToast('Tap and hold to copy manually'));
 }
 
-async function sendToCassie() {
-  const btn = document.getElementById('cassie-btn');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner" style="border-color:rgba(29,158,117,0.3);border-top-color:var(--green);"></span> Sending...'; }
-
+async function sendDataToCassie() {
   const goalsHit = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'green').length;
   const almostDays = state.days.filter(d => getStepStatus(d.steps, state.goal) === 'yellow').length;
   const avgSteps = state.days.length > 0 ? Math.round(state.days.reduce((s,d) => s + d.steps, 0) / state.days.length) : 0;
@@ -507,12 +510,18 @@ async function sendToCassie() {
     avgSteps, avgMood, words, days: state.days
   };
 
+  await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+}
+
+async function sendToCassie() {
+  const btn = document.getElementById('cassie-btn');
+  if (btn) { btn.disabled = true; btn.classList.remove('sent'); btn.innerHTML = '<span class="spinner" style="border-color:rgba(29,158,117,0.3);border-top-color:var(--green);"></span> Sending...'; }
   try {
-    await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-    if (btn) { btn.classList.add('sent'); btn.innerHTML = '<i class="ti ti-check"></i> Sent to Cassie!'; }
+    await sendDataToCassie();
+    if (btn) { btn.disabled = false; btn.classList.add('sent'); btn.innerHTML = '<i class="ti ti-check"></i> Synced with Cassie'; }
     showToast('Data sent successfully!', 3000);
   } catch(e) {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-send"></i> Send my data to Cassie'; }
+    if (btn) { btn.disabled = false; btn.classList.remove('sent'); btn.innerHTML = '<i class="ti ti-send"></i> Resend to Cassie'; }
     showToast('Could not send — try again', 3000);
   }
 }
